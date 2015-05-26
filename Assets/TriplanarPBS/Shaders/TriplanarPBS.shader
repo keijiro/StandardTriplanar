@@ -1,7 +1,7 @@
 ﻿//
-// PBR shader with triplanar mapping
+// A physically based shader with triplanar mapping
 //
-Shader "Custom/Triplanar PBR"
+Shader "Custom/Triplanar PBS"
 {
     Properties
     {
@@ -97,5 +97,5 @@ Shader "Custom/Triplanar PBR"
         ENDCG
     } 
     FallBack "Diffuse"
-    CustomEditor "TriplanarPBSShaderGUI"
+    CustomEditor "TriplanarPBSGUI"
 }

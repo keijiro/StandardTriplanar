@@ -1,12 +1,12 @@
 ﻿//
-// Custom material editor for the triplanar PBS shader
+// Custom material editor for the triplanar PBS
 //
 
 using UnityEngine;
 using UnityEditor;
 using System;
 
-public class TriplanarPBSShaderGUI : ShaderGUI
+public class TriplanarPBSGUI : ShaderGUI
 {
 	MaterialProperty _albedoMap;
 	MaterialProperty _albedoColor;
