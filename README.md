@@ -1,5 +1,5 @@
-Standard Triplanar Shader for Unity
-===================================
+Triplanar mapping Shader for Unity
+==================================
 
 This is a customized variant of Unity's standard shader with triplanar mapping
 (texture mapping without UV coordinates).
