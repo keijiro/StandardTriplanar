@@ -1,6 +1,12 @@
-TriplanarPBS
-------------
+Standard Triplanar Shader for Unity
+===================================
 
-A physically based shader with triplanar mapping.
+This is a customized variant of Unity's standard shader with triplanar mapping
+(texture mapping without UV coordinates).
 
-![Screenshot](https://40.media.tumblr.com/cdafcb1f83048fd5abf5fd2c1892c80d/tumblr_noyp3nmx0d1qio469o1_640.png)
+![Screenshot](https://i.imgur.com/n5aKrlt.png)
+
+License
+-------
+
+[Public domain](http://unlicense.org/)
