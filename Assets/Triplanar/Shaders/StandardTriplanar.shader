@@ -1,30 +1,32 @@
-﻿//
-// A physically based shader with triplanar mapping
-//
-Shader "Custom/Triplanar PBS"
+﻿// Standard shader with triplanar mapping
+// https://github.com/keijiro/StandardTriplanar
+
+Shader "Standard Triplanar"
 {
     Properties
     {
-        _Color("Color", Color) = (1,1,1,1)
-        _MainTex("Albedo", 2D) = "white" {}
+        _Color("", Color) = (1, 1, 1, 1)
+        _MainTex("", 2D) = "white" {}
 
-        _Glossiness("Smoothness", Range(0.0, 1.0)) = 0.5
-        [Gamma] _Metallic("Metallic", Range(0.0, 1.0)) = 0.0
+        _Glossiness("", Range(0, 1)) = 0.5
+        [Gamma] _Metallic("", Range(0, 1)) = 0
 
-		_BumpMap("Normal Map", 2D) = "bump" {}
+        _BumpScale("", Float) = 1
+        _BumpMap("", 2D) = "bump" {}
 
-		_OcclusionStrength("Strength", Range(0.0, 1.0)) = 1.0
-		_OcclusionMap("Occlusion", 2D) = "white" {}
+        _OcclusionStrength("", Range(0, 1)) = 1
+        _OcclusionMap("", 2D) = "white" {}
 
-        _MapScale("Mapping Scale", Float) = 1.0
+        _MapScale("", Float) = 1
     }
     SubShader
     {
         Tags { "RenderType"="Opaque" }
-        
+
         CGPROGRAM
 
-        #pragma surface surf Standard vertex:vert fullforwardshadows
+        #pragma surface surf Standard vertex:vert fullforwardshadows addshadow
+
         #pragma shader_feature _NORMALMAP
         #pragma shader_feature _OCCLUSIONMAP
 
@@ -36,6 +38,7 @@ Shader "Custom/Triplanar PBS"
         half _Glossiness;
         half _Metallic;
 
+        half _BumpScale;
         sampler2D _BumpMap;
 
         half _OcclusionStrength;
@@ -43,7 +46,8 @@ Shader "Custom/Triplanar PBS"
 
         half _MapScale;
 
-        struct Input {
+        struct Input
+        {
             float3 localCoord;
             float3 localNormal;
         };
@@ -55,13 +59,13 @@ Shader "Custom/Triplanar PBS"
             data.localNormal = v.normal.xyz;
         }
 
-        void surf (Input IN, inout SurfaceOutputStandard o)
+        void surf(Input IN, inout SurfaceOutputStandard o)
         {
-            // Calculate a blend factor for triplanar mapping.
+            // Blending factor of triplanar mapping
             float3 bf = normalize(abs(IN.localNormal));
             bf /= dot(bf, (float3)1);
 
-            // Get texture coordinates.
+            // Triplanar mapping
             float2 tx = IN.localCoord.yz * _MapScale;
             float2 ty = IN.localCoord.zx * _MapScale;
             float2 tz = IN.localCoord.xy * _MapScale;
@@ -74,28 +78,28 @@ Shader "Custom/Triplanar PBS"
             o.Albedo = color.rgb;
             o.Alpha = color.a;
 
-#ifdef _NORMALMAP
+        #ifdef _NORMALMAP
             // Normal map
             half4 nx = tex2D(_BumpMap, tx) * bf.x;
             half4 ny = tex2D(_BumpMap, ty) * bf.y;
             half4 nz = tex2D(_BumpMap, tz) * bf.z;
-            o.Normal = UnpackNormal(nx + ny + nz);
-#endif
+            o.Normal = UnpackScaleNormal(nx + ny + nz, _BumpScale);
+        #endif
 
-#ifdef _OCCLUSIONMAP
+        #ifdef _OCCLUSIONMAP
             // Occlusion map
             half ox = tex2D(_OcclusionMap, tx).g * bf.x;
             half oy = tex2D(_OcclusionMap, ty).g * bf.y;
             half oz = tex2D(_OcclusionMap, tz).g * bf.z;
             o.Occlusion = lerp((half4)1, ox + oy + oz, _OcclusionStrength);
-#endif
+        #endif
 
-            // Pass through the other parameters.
+            // Misc parameters
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
         }
         ENDCG
-    } 
+    }
     FallBack "Diffuse"
-    CustomEditor "TriplanarPBSGUI"
+    CustomEditor "StandardTriplanarInspector"
 }
